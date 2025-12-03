@@ -2,7 +2,6 @@ package mate.academy.dao.impl;
 
 import jakarta.persistence.criteria.CriteriaQuery;
 import java.util.List;
-import java.util.Optional;
 import mate.academy.dao.OrderDao;
 import mate.academy.exception.DataProcessingException;
 import mate.academy.lib.Dao;
