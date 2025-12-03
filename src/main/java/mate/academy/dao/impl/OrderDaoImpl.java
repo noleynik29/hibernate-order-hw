@@ -38,18 +38,29 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public Optional<Order> getByUser(User user) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Order> query = session.createQuery("FROM Order o "
-                    + "LEFT JOIN FETCH o.tickets t "
-                    + "LEFT JOIN FETCH t.movieSession ms "
-                    + "LEFT JOIN FETCH ms.movie "
-                    + "LEFT JOIN FETCH ms.cinemaHall "
-                    + "WHERE o.user =:user", Order.class);
+    public List<Order> getByUser(User user) {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            Query<Order> query = session.createQuery(
+                    "FROM Order o "
+                            + "LEFT JOIN FETCH o.tickets "
+                            + "WHERE o.user = :user "
+                            + "ORDER BY o.orderDate DESC",
+                    Order.class
+            );
             query.setParameter("user", user);
-            return Optional.ofNullable(query.uniqueResult());
+
+            return query.getResultList()
+                    .stream()
+                    .distinct()
+                    .toList();
         } catch (Exception e) {
-            throw new DataProcessingException("Can't find a Order by user: " + user, e);
+            throw new RuntimeException("Can't get order history for user " + user, e);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
     }
 

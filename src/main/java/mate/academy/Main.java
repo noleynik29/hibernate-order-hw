@@ -67,9 +67,10 @@ public class Main {
         ShoppingCartService shoppingCartService = (ShoppingCartService) injector
                 .getInstance(ShoppingCartService.class);
         shoppingCartService.registerNewShoppingCart(user);
+        shoppingCartService.addSession(tomorrowMovieSession, user);
 
         OrderService orderService = (OrderService) injector.getInstance(OrderService.class);
-        orderService.completeOrder(shoppingCartService.getByUser(user));
+        System.out.println(orderService.completeOrder(shoppingCartService.getByUser(user)));
         orderService.getOrdersHistory(user);
     }
 }
